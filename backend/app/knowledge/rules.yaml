@@ -1,0 +1,161 @@
+project:
+  name: TerraLoop
+  module: crop_knowledge_and_explanation
+  version: 2.0
+  approach: transparent_rules_based
+  evidence_policy: >-
+    This file stores agronomic guidance and metadata for the decision engine.
+    It does not calculate scores, traffic lights, rankings, or trust verdicts.
+    Local variety, season, soil, irrigation, and district guidance take priority.
+
+references:
+  tnau_water_requirements:
+    title: TNAU - Water Requirements of Agricultural Crops
+    url: https://agritech.tnau.ac.in/agriculture/agri_irrigationmgt_waterrequirements.html
+    supports: "Listed crop duration and total water requirement under the stated surface-irrigation method."
+  tnau_crop_sequence_selection:
+    title: TNAU - Criteria to Select Crops in Sequence for Rotational Cropping
+    url: https://agritech.tnau.ac.in/agriculture/agri_cropselect.html
+    supports: "General sequence principles: alternate legumes and non-legumes; restorative and exhaustive crops; deep-rooted and shallow-rooted crops; dicots and monocots."
+  tnau_dryland_crop_rotation:
+    title: "TNAU - Dryland Agriculture: Crop Rotation"
+    url: https://agritech.tnau.ac.in/agriculture/agri_majorareas_dryland_agromeasures_croprotation.html
+    supports: "Examples of crop sequences and the importance of rainfall and soil characteristics when selecting systems."
+  tnau_southern_zone_patterns:
+    title: TNAU - Southern Zone Cropping Patterns
+    url: https://agritech.tnau.ac.in/agriculture/agri_agrometeorology_croppingpattern_southernzone.html
+    supports: "Region- and situation-specific sequences, including rice followed by pulses and groundnut/pulses followed by sesame."
+  icar_organic_farming_guidance:
+    title: ICAR - Indian Farming, January 2022
+    url: https://icar.org.in/sites/default/files/Circulars/IF-January-2022-m.pdf
+    supports: "Legumes in cropping systems, nutrient recycling, and rotation of pest-host and non-host crops; context is organic farming, not a universal numerical rule."
+  fao_crop_rotation_guidance:
+    title: FAO - Crop rotation and cropping systems guidance
+    url: https://www.fao.org/4/s2022e/s2022e02.htm
+    supports: "General crop-rotation principles; use as background, not a district-specific recommendation."
+  botanical_taxonomy:
+    title: Kew Science - Plants of the World Online
+    url: https://powo.science.kew.org/
+    supports: "Accepted scientific names and botanical family classification."
+
+crop_table:
+  file: crops.csv
+  fields:
+    crop_id: Stable identifier used by the software.
+    crop_name: Common crop name.
+    scientific_name: Botanical name.
+    crop_family: Botanical family; taxonomy source is recorded in the crop row notes/source fields.
+    is_legume: Boolean crop classification; use Fabaceae membership as the botanical proxy in this pilot.
+    duration_min_days: Minimum only where the cited source gives a range; otherwise the cited table's representative duration.
+    duration_max_days: Maximum only where the cited source gives a range; otherwise the cited table's representative duration.
+    tnau_reference_water_mm: TNAU reference total, only when listed in the cited table.
+    water_requirement_class: Not classified unless a documented, project-approved classification method is added.
+  interpretation:
+    duration: "Variety and season dependent. A single TNAU table value is a reference entry, not a promise for every variety."
+    water: "TNAU values are for surface irrigation with 5 cm depth at each irrigation. They are not universal crop water footprints or direct field measurements."
+    missing_water_value: "Keep blank/not_specified. Do not estimate from another crop or infer a class."
+    family: "Family is botanical taxonomy. Family change alone does not prove a pest or disease break."
+
+rotation_rules:
+  - id: alternate_legume_non_legume
+    rule: "Prefer evaluating sequences that alternate non-leguminous and leguminous crops where locally suitable."
+    examples_from_source: "TNAU gives green gram followed by wheat or maize as examples."
+    action: provide_engine_with_sequence_flag
+    evidence: tnau_crop_sequence_selection
+    constraint: "Do not automatically reject a sequence; check season, water, soil, variety and local recommendations."
+
+  - id: restorative_then_exhaustive
+    rule: "Consider a restorative crop before an exhaustive or non-restorative crop."
+    examples_from_source: "TNAU lists sesame followed by cowpea, green gram, black gram or groundnut as examples."
+    action: provide_rotation_guidance
+    evidence: tnau_crop_sequence_selection
+
+  - id: deep_rooted_then_shallow_rooted
+    rule: "Consider root-depth sequence when root-depth information is available for the selected varieties."
+    examples_from_source: "TNAU gives cotton/castor/pigeonpea followed by potato/lentil/green gram as examples."
+    action: provide_rotation_guidance
+    evidence: tnau_crop_sequence_selection
+    constraint: "The current crop table does not contain measured root-depth values; do not automate this rule yet."
+
+  - id: monocot_dicot_sequence
+    rule: "TNAU includes monocot/dicot alternation among crop-sequence selection criteria."
+    action: informational_flag_only
+    evidence: tnau_crop_sequence_selection
+    constraint: "Do not treat botanical class alternation as sufficient proof of disease control or suitability."
+
+  - id: local_rotation_examples
+    rule: "Use region-specific TNAU cropping patterns as candidate examples only when the farm's zone, soil, water regime and season match the source context."
+    examples_from_source: "TNAU Southern Zone includes rice followed by pulses and groundnut/pulses followed by sesame in specified situations."
+    action: candidate_reference_only
+    evidence: tnau_southern_zone_patterns
+
+  - id: host_nonhost_rotation
+    rule: "Rotation of pest-host and non-host crops can be considered as a pest and disease management principle."
+    action: request_crop_pest_host_metadata_before_automation
+    evidence: icar_organic_farming_guidance
+    constraint: "The current crop table does not encode pest-host relationships; do not claim a pest-cycle break from crop-family difference alone."
+
+  - id: legume_nitrogen_context
+    rule: "Legumes may contribute biologically fixed nitrogen; actual benefit depends on species, nodulation, biomass, residue handling and field conditions."
+    action: explanation_context_only
+    evidence: icar_organic_farming_guidance
+    constraint: "Do not assign a fixed nitrogen credit or soil score from legume presence alone."
+
+  - id: keep_current_baseline
+    rule: "The current rotation must remain visible as a comparison baseline."
+    action: preserve_current_option
+    evidence: project_requirement
+
+  - id: repeated_crop_review
+    rule: "Flag consecutive repetition of the same crop for agronomic review; do not automatically reject it without crop- and location-specific evidence."
+    action: review_flag_only
+    evidence: project_safety_rule
+
+  - id: duration_fit
+    rule: "Compare crop duration with the available growing window only when the engine provides a valid local window and selected variety."
+    action: conditional_compatibility_check
+    evidence: tnau_water_requirements
+
+  - id: water_fit
+    rule: "Compare water requirement only when water supply and crop reference use share compatible units, method, period and context."
+    action: conditional_compatibility_check
+    evidence: tnau_water_requirements
+
+  - id: missing_soil_values
+    rule: "If soil pH or EC is absent, disclose that it was not provided. Do not infer soil chemistry from satellite data."
+    action: disclose_missing_input
+    evidence: project_limit
+
+  - id: source_traceability
+    rule: "Every crop fact must retain a source name and URL. Unsupported facts must remain unknown."
+    action: preserve_source_metadata
+    evidence: project_requirement
+
+scoring_boundary:
+  owner: Nithesh_decision_engine
+  knowledge_module_must_not:
+    - calculate_overall_scores
+    - create_traffic_light_statuses
+    - rank_rotations
+    - calculate_source_agreement_counts
+    - invent_switch_or_stay_verdicts
+    - invent_decisive_checks
+
+explanation_policy:
+  owner: Jagadesh
+  allowed:
+    - format_engine_provided_scores
+    - translate_engine_provided_statuses
+    - explain_crop_metadata_and_its_sources
+    - display_missing_values_as_not_provided
+  prohibited:
+    - create_or_modify_scores
+    - change_rotation_rankings
+    - infer_unprovided_climate_values
+    - claim_yield_or_income_predictions
+    - claim_satellite_data_measures_field_level_nutrients
+
+validation:
+  local_agronomist_review_required: true
+  verify_variety_season_and_district_before_farmer_advice: true
+  pilot_district: "To be confirmed by the team"
