@@ -1,0 +1,41 @@
+# TerraLoop — Crop Rotation Card
+
+## Farm details
+- District: {{ farm.district }}
+- Water source: {{ farm.water_source }}
+- Previous crops: {{ farm.last_crops | join(" → ") }}
+- Soil pH: {{ farm.soil_ph }}
+- Soil EC: {{ farm.soil_ec }}
+
+## Rotation options
+{% for option in options %}
+### {{ loop.index }}. {{ option.name }}{% if option.is_current %} (Current rotation){% endif %}
+- Engine score: {{ option.overall_score }}/100
+- Water status: {{ option.water }}
+- Soil status: {{ option.soil }}
+- Cost/risk status: {{ option.cost_risk }}
+- Engine explanation: {{ option.explanation }}
+{% endfor %}
+
+## Climate information
+- Status: {{ climate.status }}
+- Message: {{ climate.message }}
+{% if climate.rainfall is defined and climate.rainfall is not none %}- Rainfall: {{ climate.rainfall }}{% endif %}
+{% if climate.temperature is defined and climate.temperature is not none %}- Temperature: {{ climate.temperature }}{% endif %}
+{% if climate.soil_moisture is defined and climate.soil_moisture is not none %}- Soil moisture: {{ climate.soil_moisture }}{% endif %}
+{% if climate.dry_spell_count is defined and climate.dry_spell_count is not none %}- Dry-spell count: {{ climate.dry_spell_count }}{% endif %}
+
+## Trust checks
+### Source agreement
+{{ trust_checks.source_agreement.message }}
+
+### Switch or stay
+{{ trust_checks.switch_or_stay }}
+
+### Decisive check
+{{ trust_checks.decisive_check }}
+
+## Limitations
+{{ limits_note }}
+
+TerraLoop — Rotation advice you can trust.
