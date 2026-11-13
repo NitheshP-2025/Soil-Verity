@@ -1,0 +1,289 @@
+{
+  "options": [
+    {
+      "name": "Sesame > Black gram > Sesame",
+      "crops": [
+        "Sesame",
+        "Black gram",
+        "Sesame"
+      ],
+      "seasons": [
+        "kharif",
+        "rabi",
+        "summer"
+      ],
+      "is_current": false,
+      "is_top": true,
+      "rank": 1,
+      "mean_score": 0.8316,
+      "scores": {
+        "water": 0.8962,
+        "soil": 0.9054,
+        "econ": 0.6833,
+        "risk": 0.7033
+      },
+      "lights": {
+        "water": "green",
+        "soil": "green",
+        "cost_risk": "green"
+      },
+      "facts": {
+        "legume_count": 1,
+        "family_repeats": 0,
+        "bare_months": 3.83,
+        "irrigation_needed_mm": 312.9,
+        "shortage_share_by_season": {
+          "kharif": 0.0,
+          "rabi": 0.0,
+          "summer": 0.725
+        }
+      },
+      "stability": {
+        "first_in": 213,
+        "of": 360,
+        "top3_in": 360,
+        "label": "Mixed",
+        "first_in_by_source": {
+          "imerg+merra2": 49,
+          "imerg+smap": 46,
+          "power+merra2": 60,
+          "power+smap": 58
+        }
+      }
+    },
+    {
+      "name": "Sesame > Black gram > Fallow",
+      "crops": [
+        "Sesame",
+        "Black gram",
+        "Fallow"
+      ],
+      "seasons": [
+        "kharif",
+        "rabi",
+        "summer"
+      ],
+      "is_current": false,
+      "is_top": false,
+      "rank": 2,
+      "mean_score": 0.8295,
+      "scores": {
+        "water": 0.9838,
+        "soil": 0.8449,
+        "econ": 0.5167,
+        "risk": 0.8031
+      },
+      "lights": {
+        "water": "green",
+        "soil": "green",
+        "cost_risk": "yellow"
+      },
+      "facts": {
+        "legume_count": 1,
+        "family_repeats": 0,
+        "bare_months": 6.67,
+        "irrigation_needed_mm": 73.8,
+        "shortage_share_by_season": {
+          "kharif": 0.0,
+          "rabi": 0.0,
+          "summer": 0.0
+        }
+      },
+      "stability": {
+        "first_in": 147,
+        "of": 360,
+        "top3_in": 358,
+        "label": "Fragile",
+        "first_in_by_source": {
+          "imerg+merra2": 41,
+          "imerg+smap": 44,
+          "power+merra2": 30,
+          "power+smap": 32
+        }
+      }
+    },
+    {
+      "name": "Fallow > Black gram > Sesame",
+      "crops": [
+        "Fallow",
+        "Black gram",
+        "Sesame"
+      ],
+      "seasons": [
+        "kharif",
+        "rabi",
+        "summer"
+      ],
+      "is_current": false,
+      "is_top": false,
+      "rank": 3,
+      "mean_score": 0.8044,
+      "scores": {
+        "water": 0.9086,
+        "soil": 0.8449,
+        "econ": 0.5167,
+        "risk": 0.8028
+      },
+      "lights": {
+        "water": "green",
+        "soil": "green",
+        "cost_risk": "yellow"
+      },
+      "facts": {
+        "legume_count": 1,
+        "family_repeats": 0,
+        "bare_months": 6.67,
+        "irrigation_needed_mm": 257.1,
+        "shortage_share_by_season": {
+          "kharif": 0.0,
+          "rabi": 0.0,
+          "summer": 0.725
+        }
+      },
+      "stability": {
+        "first_in": 0,
+        "of": 360,
+        "top3_in": 104,
+        "label": "Fragile",
+        "first_in_by_source": {
+          "imerg+merra2": 0,
+          "imerg+smap": 0,
+          "power+merra2": 0,
+          "power+smap": 0
+        }
+      }
+    },
+    {
+      "name": "Rice (short duration) > Rice (short duration) > Fallow",
+      "crops": [
+        "Rice (short duration)",
+        "Rice (short duration)",
+        "Fallow"
+      ],
+      "seasons": [
+        "kharif",
+        "rabi",
+        "summer"
+      ],
+      "is_current": true,
+      "is_top": false,
+      "rank": 31,
+      "mean_score": 0.5516,
+      "scores": {
+        "water": 0.5595,
+        "soil": 0.5194,
+        "econ": 0.35,
+        "risk": 0.802
+      },
+      "lights": {
+        "water": "yellow",
+        "soil": "yellow",
+        "cost_risk": "yellow"
+      },
+      "facts": {
+        "legume_count": 0,
+        "family_repeats": 1,
+        "bare_months": 4.67,
+        "irrigation_needed_mm": 1319.7,
+        "shortage_share_by_season": {
+          "kharif": 1.0,
+          "rabi": 1.0,
+          "summer": 0.0
+        }
+      },
+      "stability": {
+        "first_in": 0,
+        "of": 360,
+        "top3_in": 0,
+        "label": "Fragile",
+        "first_in_by_source": {
+          "imerg+merra2": 0,
+          "imerg+smap": 0,
+          "power+merra2": 0,
+          "power+smap": 0
+        }
+      }
+    }
+  ],
+  "verdict": {
+    "decision": "switch",
+    "reason_code": "clear_advantage",
+    "win_rate": 1.0,
+    "median_gap": 0.2803,
+    "best": "Sesame > Black gram > Sesame",
+    "current": "Rice (short duration) > Rice (short duration) > Fallow"
+  },
+  "source_agreement": {
+    "agree": true,
+    "n_combos": 4,
+    "comparable": true,
+    "top_by_source": {
+      "imerg+merra2": "Sesame > Black gram > Sesame",
+      "imerg+smap": "Sesame > Black gram > Sesame",
+      "power+merra2": "Sesame > Black gram > Sesame",
+      "power+smap": "Sesame > Black gram > Sesame"
+    }
+  },
+  "weights_flip_top": true,
+  "decisive_check": {
+    "input": "irrigation_reliability",
+    "label": "How reliable your irrigation water will be",
+    "tested_values": {
+      "low": 0.4,
+      "high": 1.0
+    },
+    "top_if_low": "Sesame > Black gram > Fallow",
+    "top_if_high": "Sesame > Black gram > Sesame",
+    "n_changes": 1
+  },
+  "assumptions": [
+    {
+      "input": "soil_ec",
+      "assumed": 1.5,
+      "note": "not provided; district default assumed (low confidence)"
+    },
+    {
+      "input": "soil_ph",
+      "assumed": 7.0,
+      "note": "not provided; district default assumed (low confidence)"
+    },
+    {
+      "input": "irrigation_reliability",
+      "assumed": 0.8,
+      "note": "not provided; default share of irrigation allowance assumed"
+    }
+  ],
+  "meta": {
+    "n_candidates": 41,
+    "pool_size": 31,
+    "n_variants": 40,
+    "n_weight_sets": 9,
+    "checks_per_option": 360,
+    "top_two_gap": 0.0021,
+    "years": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "sources": [
+      "imerg+merra2",
+      "imerg+smap",
+      "power+merra2",
+      "power+smap"
+    ],
+    "priorities_normalized": {
+      "water": 0.333,
+      "soil": 0.333,
+      "cost": 0.167,
+      "risk": 0.167
+    },
+    "note": "Scores compare options on this farm. They are not yield or income forecasts."
+  }
+}
