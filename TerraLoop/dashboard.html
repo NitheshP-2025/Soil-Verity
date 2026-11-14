@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soil Verity Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-page">
+
+<header class="navbar">
+    <a href="index.html" class="logo">🌱 Soil Verity</a>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#soil">Soil</a>
+        <a href="#disease">Disease</a>
+        <a href="#market">Market</a>
+        <button class="icon-btn" id="themeToggle">🌙</button>
+    </nav>
+</header>
+
+<main class="dashboard">
+
+<div class="dashboard-heading">
+    <div>
+        <span class="tag">SMART AGRICULTURE PLATFORM</span>
+        <h1>Farm Dashboard</h1>
+        <p>Welcome to your smart farming workspace.</p>
+    </div>
+    <div class="profile">
+        <div class="avatar">👨‍🌾</div>
+        <div><strong>Farmer</strong><small>Farm Owner</small></div>
+    </div>
+</div>
+
+<!-- FARM DETAILS -->
+<section class="panel">
+<h2>🌾 Farm Information</h2>
+<form id="farmForm" class="farm-form">
+    <div>
+        <label for="location">Farm Location</label>
+        <input id="location" required placeholder="Enter location">
+    </div>
+    <div>
+        <label for="soilType">Soil Type</label>
+        <select id="soilType" required>
+            <option value="">Select soil</option>
+            <option>Red Soil</option>
+            <option>Black Soil</option>
+            <option>Clay Soil</option>
+            <option>Sandy Soil</option>
+            <option>Loamy Soil</option>
+        </select>
+    </div>
+    <div>
+        <label for="water">Water Source</label>
+        <select id="water" required>
+            <option value="">Select water source</option>
+            <option>Borewell</option>
+            <option>River</option>
+            <option>Rainwater</option>
+            <option>Canal</option>
+        </select>
+    </div>
+    <div>
+        <label for="crop1">Previous Crop</label>
+        <input id="crop1" required placeholder="Example: Rice">
+    </div>
+    <div>
+        <label for="crop2">Previous Crop 2</label>
+        <input id="crop2" placeholder="Example: Groundnut">
+    </div>
+    <button class="primary-btn" type="submit">Generate Report →</button>
+</form>
+<p id="farmSummary" class="summary-text">Sample report · Demo data</p>
+</section>
+
+<!-- SOIL ANALYTICS -->
+<section class="section-block" id="soil">
+    <span class="tag">SOIL INTELLIGENCE</span>
+    <h2>Soil Health Analytics</h2>
+    <div class="stats-grid">
+        <div class="stat-card"><span>🌱 Soil Health</span><h3>76/100</h3><small>Demo value</small></div>
+        <div class="stat-card"><span>🧪 Soil pH</span><h3>6.5</h3><small>Demo value</small></div>
+        <div class="stat-card"><span>💧 Nitrogen</span><h3>65</h3><small>mg/kg · Demo</small></div>
+        <div class="stat-card"><span>🌿 Phosphorus</span><h3>42</h3><small>mg/kg · Demo</small></div>
+        <div class="stat-card"><span>🌾 Potassium</span><h3>58</h3><small>mg/kg · Demo</small></div>
+    </div>
+</section>
+
+<!-- WEATHER -->
+<section class="section-block" id="weather">
+    <span class="tag">CLIMATE INSIGHTS</span>
+    <h2>Weather Overview</h2>
+    <div class="weather-grid">
+        <div class="weather-card"><span>🌡️ Temperature</span><h3>29°C</h3><small>Demo value</small></div>
+        <div class="weather-card"><span>💧 Humidity</span><h3>68%</h3><small>Demo value</small></div>
+        <div class="weather-card"><span>🌧️ Rainfall</span><h3>12 mm</h3><small>Demo value</small></div>
+        <div class="weather-card"><span>🌬️ Wind Speed</span><h3>14 km/h</h3><small>Demo value</small></div>
+    </div>
+</section>
+
+<!-- CROP RECOMMENDATION -->
+<section class="section-block">
+    <span class="tag">SMART FARMING</span>
+    <h2>Crop Recommendations</h2>
+    <div class="crop-grid">
+        <div class="crop-card"><div class="crop-emoji">🌾</div><h3>Rice</h3><p>Sample crop suggestion</p></div>
+        <div class="crop-card"><div class="crop-emoji">🫘</div><h3>Black Gram</h3><p>Sample crop suggestion</p></div>
+        <div class="crop-card"><div class="crop-emoji">🌻</div><h3>Groundnut</h3><p>Sample crop suggestion</p></div>
+    </div>
+</section>
+
+<!-- DISEASE DETECTION -->
+<section class="section-block" id="disease">
+    <span class="tag">PLANT CARE</span>
+    <h2>Plant Disease Detection</h2>
+    <div class="panel">
+        <p>Upload a plant leaf image to preview it.</p>
+        <label class="upload-area" for="leafUpload">
+            <span>📷</span>
+            <strong>Upload Leaf Image</strong>
+            <small>Choose JPG or PNG image</small>
+            <input type="file" id="leafUpload" accept="image/*">
+        </label>
+        <img id="leafPreview" class="leaf-preview" alt="Leaf preview">
+        <p id="leafMessage" class="summary-text">No image selected.</p>
+        <p class="demo-note">Image preview only. Actual disease detection requires an AI model.</p>
+    </div>
+</section>
+
+<!-- IRRIGATION -->
+<section class="section-block" id="irrigation">
+    <span class="tag">WATER MANAGEMENT</span>
+    <h2>Smart Irrigation</h2>
+    <div class="panel">
+        <div class="section-heading">
+            <h3>Soil Moisture Level</h3>
+            <strong id="moistureValue">45%</strong>
+        </div>
+        <input type="range" id="moistureSlider" min="0" max="100" value="45">
+        <div class="progress"><span id="moistureBar" style="width:45%"></span></div>
+        <h3 id="waterStatus" class="water-status">Moderate Moisture</h3>
+        <p class="demo-note">Move the slider to explore sample irrigation suggestions. This is not a real sensor reading.</p>
+    </div>
+</section>
+
+<!-- FERTILIZER -->
+<section class="section-block" id="fertilizer">
+    <span class="tag">NUTRIENT MANAGEMENT</span>
+    <h2>Fertilizer Suggestions</h2>
+    <div class="crop-grid">
+        <div class="crop-card"><div class="crop-emoji">🌿</div><h3>Compost</h3><p>Organic soil improvement option.</p></div>
+        <div class="crop-card"><div class="crop-emoji">🧪</div><h3>NPK Fertilizer</h3><p>Balanced nutrient option.</p></div>
+        <div class="crop-card"><div class="crop-emoji">🍃</div><h3>Green Manure</h3><p>Organic soil enrichment option.</p></div>
+    </div>
+    <p class="demo-note">General examples only. Actual fertilizer choice and dosage require verified soil test results and agricultural advice.</p>
+</section>
+
+<!-- MARKET TRACKER -->
+<section class="section-block" id="market">
+    <span class="tag">AGRICULTURE MARKET</span>
+    <h2>Crop Market Price Tracker</h2>
+    <div class="panel table-wrap">
+        <table class="market-table">
+            <thead><tr><th>Crop</th><th>Market</th><th>Sample Price / Quintal</th></tr></thead>
+            <tbody>
+                <tr><td>Rice</td><td>Villupuram</td><td>₹2,300</td></tr>
+                <tr><td>Groundnut</td><td>Villupuram</td><td>₹6,200</td></tr>
+                <tr><td>Black Gram</td><td>Villupuram</td><td>₹7,000</td></tr>
+                <tr><td>Maize</td><td>Villupuram</td><td>₹2,100</td></tr>
+            </tbody>
+        </table>
+        <p class="demo-note">Illustrative prices only, not live market rates.</p>
+    </div>
+</section>
+
+<!-- FARM HISTORY -->
+<section class="section-block" id="history">
+    <span class="tag">YOUR FARM RECORDS</span>
+    <h2>Farm History</h2>
+    <div class="panel">
+        <div id="historyList" class="history-list">
+            <p class="demo-note">Your generated farm reports will appear here.</p>
+        </div>
+    </div>
+</section>
+
+<!-- AI ASSISTANT -->
+<section class="section-block" id="assistant">
+    <span class="tag">FARMING SUPPORT</span>
+    <h2>AI Farming Assistant</h2>
+    <div class="panel chat-panel">
+        <div class="chat-heading">🤖 Soil Verity Assistant <span class="status-pill">Demo Chat</span></div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="bot-message">Hello! 🌱 Ask me about soil, crops, irrigation or fertilizers.</div>
+        </div>
+        <form id="chatForm" class="chat-form">
+            <input id="chatInput" placeholder="Ask a farming question..." autocomplete="off" required>
+            <button class="primary-btn" type="submit">Send</button>
+        </form>
+        <p class="demo-note">Predefined demo replies only. Not a real AI assistant.</p>
+    </div>
+</section>
+
+<!-- REPORT -->
+<section class="panel">
+    <div class="section-heading">
+        <div>
+            <span class="tag">FARM REPORT</span>
+            <h2>Download Your Report</h2>
+        </div>
+        <button class="primary-btn" id="downloadReport">↓ Download PDF</button>
+    </div>
+    <p class="demo-note">Uses your browser's Print / Save as PDF option.</p>
+</section>
+
+<p class="demo-note">Soil Verity demo project · All displayed measurements and prices are sample data.</p>
+
+</main>
+
+<footer>
+    <h3>🌱 Soil Verity</h3>
+    <small>Growing a smarter and greener tomorrow.</small>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
