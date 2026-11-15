@@ -6,6 +6,7 @@ The UI is served at http://localhost:8000 and the API at /api/*.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -93,8 +94,10 @@ class SoilVerityHandler(SimpleHTTPRequestHandler):
 
 
 def main():
-    server = ThreadingHTTPServer(("127.0.0.1", 8000), SoilVerityHandler)
-    print("SoilVerity is running at http://localhost:8000 (Ctrl+C to stop)")
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", "8000"))
+    server = ThreadingHTTPServer((host, port), SoilVerityHandler)
+    print(f"SoilVerity is running at http://{host}:{port} (Ctrl+C to stop)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
