@@ -1,0 +1,7 @@
+name,family,seasons,duration_days,water_need_mm,is_legume,needs_irrigation,equipment,cost_level,labour_level,market_level,heat_sensitivity,drought_sensitivity,waterlogging_sensitivity,ec_threshold,ph_min,ph_max
+Rice (short duration),grass,kharif|rabi,115,650,false,true,,4,4,5,0.65,0.8,0.7,3.0,5.5,7.5
+Black gram,legume,kharif|rabi|summer,80,280,true,false,,2,2,4,0.45,0.5,0.4,4.0,5.5,8.0
+Sesame,oilseed,kharif|summer,95,320,false,false,,3,3,4,0.35,0.45,0.25,4.0,5.0,8.0
+Groundnut,legume,kharif|rabi|summer,110,400,true,false,groundnut_digger,4,4,5,0.55,0.6,0.35,3.0,5.5,7.5
+Maize,grass,kharif|rabi|summer,105,450,false,false,,3,3,4,0.6,0.65,0.4,2.5,5.5,7.5
+Millet,grass,kharif|rabi|summer,95,300,false,false,,2,2,3,0.3,0.35,0.3,5.0,5.0,8.5

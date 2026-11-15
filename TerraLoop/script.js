@@ -1,164 +1,107 @@
+const $ = (id) => document.getElementById(id);
+const form = $("farmForm");
+const resultContent = $("resultContent");
+const status = $("formStatus");
 
-// FARM DETAILS AND HISTORY
-const farmForm = document.getElementById("farmForm");
-const historyList = document.getElementById("historyList");
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[char]);
+}
 
-if (farmForm) {
-    farmForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const location = document.getElementById("location").value.trim();
-        const soil = document.getElementById("soilType").value;
-        const water = document.getElementById("water").value;
-        const crop1 = document.getElementById("crop1").value.trim();
-        const crop2 = document.getElementById("crop2").value.trim();
-
-        const summary = document.getElementById("farmSummary");
-
-        summary.textContent =
-            `Farm: ${location} | Soil: ${soil} | Water: ${water} | Previous crops: ${crop1}${crop2 ? " and " + crop2 : ""}`;
-
-        const item = document.createElement("div");
-        item.className = "history-item";
-
-        const details = document.createElement("span");
-        details.textContent = `${location} · ${soil} · ${crop1}`;
-
-        const date = document.createElement("small");
-        date.textContent = new Date().toLocaleDateString();
-
-        item.append(details, date);
-
-        if (historyList.querySelector(".demo-note")) {
-            historyList.innerHTML = "";
-        }
-
-        historyList.prepend(item);
-
-        summary.scrollIntoView({ behavior: "smooth", block: "center" });
-        alert("Sample farm report generated!");
+async function loadCrops() {
+  try {
+    const response = await fetch("/api/crops");
+    if (!response.ok) throw new Error("Could not load crop list");
+    const { crops } = await response.json();
+    ["crop1", "crop2", "crop3"].forEach((id, index) => {
+      const select = $(id);
+      select.innerHTML = crops.map((crop) => `<option value="${escapeHtml(crop)}">${escapeHtml(crop)}</option>`).join("");
+      select.value = index < 2 ? "Rice (short duration)" : "Fallow";
     });
+    status.textContent = "Connected to local SoilVerity engine";
+  } catch (error) {
+    status.textContent = "Start the app with: python backend/server.py";
+    status.classList.add("error");
+  }
 }
 
-// DARK MODE
-const themeToggle = document.getElementById("themeToggle");
-
-if (themeToggle) {
-    themeToggle.addEventListener("click", function() {
-        document.body.classList.toggle("dark-mode");
-
-        themeToggle.textContent =
-            document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
-    });
+function optionCard(option) {
+  const score = Math.round(option.mean_score * 100);
+  const stability = option.stability;
+  const stress = Object.entries(option.facts.shortage_share_by_season || {})
+    .map(([season, share]) => `${season}: ${Math.round(share * 100)}% stress`).join(" · ");
+  const badges = Object.entries(option.lights || {}).map(([name, light]) =>
+    `<span class="chip">${escapeHtml(name.replace("_", " "))}: ${escapeHtml(light)}</span>`).join("");
+  return `<article class="option">
+    <div class="option-top"><span class="tag">#${option.rank}${option.is_current ? " · CURRENT" : ""}${option.is_top ? " · TOP PICK" : ""}</span><strong>${score}/100</strong></div>
+    <h3>${escapeHtml(option.name)}</h3><div class="scorebar"><span style="width:${score}%"></span></div>
+    <p>Trust stability: <strong>${escapeHtml(stability.label)}</strong> · first in ${stability.first_in} of ${stability.of} checks</p>
+    <div class="chips">${badges}</div>
+    <p class="demo-note">Estimated irrigation need: ${option.facts.irrigation_needed_mm} mm per season-cycle · ${escapeHtml(stress || "Seasonal stress not reported")}</p>
+  </article>`;
 }
 
-// PLANT IMAGE PREVIEW
-const leafUpload = document.getElementById("leafUpload");
-const leafPreview = document.getElementById("leafPreview");
-const leafMessage = document.getElementById("leafMessage");
-
-if (leafUpload) {
-    leafUpload.addEventListener("change", function() {
-        const file = this.files[0];
-
-        if (!file) return;
-
-        if (!file.type.startsWith("image/")) {
-            leafMessage.textContent = "Please select an image file.";
-            leafPreview.style.display = "none";
-            return;
-        }
-
-        const imageURL = URL.createObjectURL(file);
-        leafPreview.src = imageURL;
-        leafPreview.style.display = "block";
-        leafMessage.textContent = "Image uploaded successfully. Preview only; no disease analysis performed.";
-    });
+function renderResult(data) {
+  const verdict = data.verdict;
+  const decision = verdict.decision || "review";
+  const assumptions = (data.assumptions || []).map((item) =>
+    `<li>${escapeHtml(item.input.replaceAll("_", " "))}: ${escapeHtml(item.note)}</li>`).join("") || "<li>All key soil and irrigation inputs supplied.</li>";
+  const decisive = data.decisive_check
+    ? `<p><strong>Input that could change the top pick:</strong> ${escapeHtml(data.decisive_check.label)} · low: ${escapeHtml(data.decisive_check.top_if_low)} · high: ${escapeHtml(data.decisive_check.top_if_high)}</p>`
+    : "<p>No missing input changed the top rotation in this run.</p>";
+  resultContent.innerHTML = `
+    <div class="verdict"><span class="tag">ENGINE VERDICT</span><h3>${escapeHtml(decision.toUpperCase())} · ${escapeHtml(verdict.reason_code.replaceAll("_", " "))}</h3>
+      <p>Best: <strong>${escapeHtml(verdict.best)}</strong></p><p>Current: ${escapeHtml(verdict.current)}</p>
+      <p>Win rate: ${Math.round((verdict.win_rate || 0) * 100)}% · Median score gap: ${verdict.median_gap}</p></div>
+    <h3>Rotation options</h3><div class="options">${data.options.map(optionCard).join("")}</div>
+    <div class="trust-grid">
+      <div class="trust-card"><h3>Climate source agreement</h3><p>${data.source_agreement.agree ? "Sources agree" : "Sources do not all agree"} across ${data.source_agreement.n_combos} source combinations.</p><p class="demo-note">Checks per option: ${data.meta.checks_per_option}; data years: ${(data.meta.years || []).join(", ")}</p></div>
+      <div class="trust-card"><h3>What is assumed?</h3><ul>${assumptions}</ul></div>
+    </div>
+    <div class="trust-card" style="margin-top:14px"><h3>Decision sensitivity</h3>${decisive}<p>${data.weights_flip_top ? "Changing priority weights can change the top option." : "Top option stayed stable under tested priority changes."}</p></div>
+    <div class="demo-banner">${escapeHtml(data.demo_notice)} Results compare rotations for this demo farm; they are not yield or income forecasts.</div>`;
 }
 
-// SMART IRRIGATION
-const moistureSlider = document.getElementById("moistureSlider");
-
-if (moistureSlider) {
-    moistureSlider.addEventListener("input", function() {
-        const value = Number(this.value);
-
-        document.getElementById("moistureValue").textContent = value + "%";
-        document.getElementById("moistureBar").style.width = value + "%";
-
-        let status;
-
-        if (value < 30) {
-            status = "Low Moisture – Sample: Check watering needs";
-        } else if (value < 70) {
-            status = "Moderate Moisture – Sample";
-        } else {
-            status = "High Moisture – Sample: Check drainage";
-        }
-
-        document.getElementById("waterStatus").textContent = status;
-    });
-}
-
-// AI ASSISTANT DEMO CHAT
-const chatForm = document.getElementById("chatForm");
-const chatInput = document.getElementById("chatInput");
-const chatMessages = document.getElementById("chatMessages");
-
-function addMessage(message, className) {
-    const bubble = document.createElement("div");
-    bubble.className = className;
-    bubble.textContent = message;
-    chatMessages.appendChild(bubble);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function getDemoReply(question) {
-    const q = question.toLowerCase();
-
-    if (q.includes("soil") || q.includes("ph")) {
-        return "Soil testing helps understand pH and nutrient levels. Please use a verified soil test for actual results.";
+form?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = $("runButton");
+  button.disabled = true;
+  status.classList.remove("error");
+  status.textContent = "Running crop rotation analysis…";
+  resultContent.innerHTML = "<p>Scoring crop rotations against the demo climate set…</p>";
+  const numberOrNull = (id) => $(id).value === "" ? null : Number($(id).value);
+  const payload = {
+    water_source: $("water").value,
+    start_season: $("startSeason").value,
+    current_rotation: [$("crop1").value, $("crop2").value, $("crop3").value],
+    soil: { ph: numberOrNull("soilPh"), ec: numberOrNull("soilEc"), organic_carbon: numberOrNull("organicCarbon") },
+    priorities: {
+      water: Number($("priorityWater").value), soil: Number($("prioritySoil").value),
+      cost: Number($("priorityCost").value), risk: Number($("priorityRisk").value)
     }
-
-    if (q.includes("water") || q.includes("irrigation")) {
-        return "Irrigation depends on crop type, soil and moisture. Check actual field moisture before watering.";
-    }
-
-    if (q.includes("fertilizer") || q.includes("manure")) {
-        return "Fertilizer choice should be based on a soil test and crop requirement. Consult an agricultural expert for dosage.";
-    }
-
-    if (q.includes("rice") || q.includes("crop")) {
-        return "Crop selection depends on season, soil, water availability and local conditions. Check local agricultural guidance.";
-    }
-
-    if (q.includes("hello") || q.includes("hi")) {
-        return "Hello! Welcome to Soil Verity. Ask me about soil, crops or irrigation.";
-    }
-
-    return "Thanks for your question! This is a demo assistant. Please consult your local agricultural officer for verified advice.";
-}
-
-if (chatForm) {
-    chatForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const question = chatInput.value.trim();
-
-        if (!question) return;
-
-        addMessage(question, "user-message");
-        addMessage(getDemoReply(question), "bot-message");
-
-        chatInput.value = "";
+  };
+  try {
+    const response = await fetch("/api/recommendations", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
     });
-}
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "The recommendation request failed.");
+    renderResult(data);
+    status.textContent = `Report generated for ${$("location").value || "your farm"}`;
+    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    status.textContent = error.message;
+    status.classList.add("error");
+    resultContent.innerHTML = `<p class="error">${escapeHtml(error.message)}. Make sure the app server is running.</p>`;
+  } finally {
+    button.disabled = false;
+  }
+});
 
-// PDF REPORT
-const downloadReport = document.getElementById("downloadReport");
+$("themeToggle")?.addEventListener("click", (event) => {
+  document.body.classList.toggle("dark-mode");
+  event.currentTarget.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+});
 
-if (downloadReport) {
-    downloadReport.addEventListener("click", function() {
-        window.print();
-    });
-}
+loadCrops();
