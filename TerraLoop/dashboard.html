@@ -1,230 +1,82 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soil Verity Dashboard</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>SoilVerity | Field Shift</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .integrated { max-width:1100px; margin:auto; padding:38px 24px 80px; }
+    .intro { padding:34px; border-radius:20px; background:linear-gradient(120deg,#eaf5ed,#dcefe0); margin-bottom:24px; }
+    .intro h1 { font-size:clamp(30px,5vw,44px); color:var(--dark-green); margin:4px 0 8px; }
+    .intro p { color:var(--muted); max-width:720px; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .field label { display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+    .field input,.field select { width:100%; padding:12px; border:1px solid var(--border); border-radius:9px; background:var(--background); color:var(--text); }
+    .wide { grid-column:1/-1; }
+    .rotation { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .priority-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px; }
+    .submit-row { display:flex; align-items:center; gap:14px; margin-top:20px; flex-wrap:wrap; }
+    #formStatus { color:var(--muted); font-size:14px; }
+    .results { margin-top:28px; }
+    .verdict { padding:22px; background:var(--light-green); border-radius:14px; margin:14px 0; }
+    .options { display:grid; gap:14px; }
+    .option { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:var(--shadow); }
+    .option h3 { color:var(--dark-green); margin:5px 0; }
+    .option-top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .scorebar { height:8px; border-radius:10px; background:var(--border); overflow:hidden; margin:12px 0; }
+    .scorebar span { display:block; height:100%; background:var(--green); }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .chip { background:var(--light-green); border-radius:20px; padding:5px 10px; font-size:12px; }
+    .trust-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:14px; }
+    .trust-card { padding:18px; border:1px solid var(--border); border-radius:12px; background:var(--white); }
+    .demo-banner { padding:12px 14px; background:#fff6dd; color:#634d17; border-radius:10px; font-size:13px; margin-top:20px; }
+    .error { color:#a83232!important; }
+    @media(max-width:650px){.form-grid,.rotation,.priority-grid,.trust-grid{grid-template-columns:1fr}.integrated{padding:24px 15px 55px}.intro{padding:24px}.wide{grid-column:auto}}
+  </style>
 </head>
-<body class="dashboard-page">
-
-<header class="navbar">
-    <a href="index.html" class="logo">🌱 Soil Verity</a>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="#soil">Soil</a>
-        <a href="#disease">Disease</a>
-        <a href="#market">Market</a>
-        <button class="icon-btn" id="themeToggle">🌙</button>
-    </nav>
-</header>
-
-<main class="dashboard">
-
-<div class="dashboard-heading">
-    <div>
-        <span class="tag">SMART AGRICULTURE PLATFORM</span>
-        <h1>Farm Dashboard</h1>
-        <p>Welcome to your smart farming workspace.</p>
-    </div>
-    <div class="profile">
-        <div class="avatar">👨‍🌾</div>
-        <div><strong>Farmer</strong><small>Farm Owner</small></div>
-    </div>
-</div>
-
-<!-- FARM DETAILS -->
-<section class="panel">
-<h2>🌾 Farm Information</h2>
-<form id="farmForm" class="farm-form">
-    <div>
-        <label for="location">Farm Location</label>
-        <input id="location" required placeholder="Enter location">
-    </div>
-    <div>
-        <label for="soilType">Soil Type</label>
-        <select id="soilType" required>
-            <option value="">Select soil</option>
-            <option>Red Soil</option>
-            <option>Black Soil</option>
-            <option>Clay Soil</option>
-            <option>Sandy Soil</option>
-            <option>Loamy Soil</option>
-        </select>
-    </div>
-    <div>
-        <label for="water">Water Source</label>
-        <select id="water" required>
-            <option value="">Select water source</option>
-            <option>Borewell</option>
-            <option>River</option>
-            <option>Rainwater</option>
-            <option>Canal</option>
-        </select>
-    </div>
-    <div>
-        <label for="crop1">Previous Crop</label>
-        <input id="crop1" required placeholder="Example: Rice">
-    </div>
-    <div>
-        <label for="crop2">Previous Crop 2</label>
-        <input id="crop2" placeholder="Example: Groundnut">
-    </div>
-    <button class="primary-btn" type="submit">Generate Report →</button>
-</form>
-<p id="farmSummary" class="summary-text">Sample report · Demo data</p>
-</section>
-
-<!-- SOIL ANALYTICS -->
-<section class="section-block" id="soil">
-    <span class="tag">SOIL INTELLIGENCE</span>
-    <h2>Soil Health Analytics</h2>
-    <div class="stats-grid">
-        <div class="stat-card"><span>🌱 Soil Health</span><h3>76/100</h3><small>Demo value</small></div>
-        <div class="stat-card"><span>🧪 Soil pH</span><h3>6.5</h3><small>Demo value</small></div>
-        <div class="stat-card"><span>💧 Nitrogen</span><h3>65</h3><small>mg/kg · Demo</small></div>
-        <div class="stat-card"><span>🌿 Phosphorus</span><h3>42</h3><small>mg/kg · Demo</small></div>
-        <div class="stat-card"><span>🌾 Potassium</span><h3>58</h3><small>mg/kg · Demo</small></div>
-    </div>
-</section>
-
-<!-- WEATHER -->
-<section class="section-block" id="weather">
-    <span class="tag">CLIMATE INSIGHTS</span>
-    <h2>Weather Overview</h2>
-    <div class="weather-grid">
-        <div class="weather-card"><span>🌡️ Temperature</span><h3>29°C</h3><small>Demo value</small></div>
-        <div class="weather-card"><span>💧 Humidity</span><h3>68%</h3><small>Demo value</small></div>
-        <div class="weather-card"><span>🌧️ Rainfall</span><h3>12 mm</h3><small>Demo value</small></div>
-        <div class="weather-card"><span>🌬️ Wind Speed</span><h3>14 km/h</h3><small>Demo value</small></div>
-    </div>
-</section>
-
-<!-- CROP RECOMMENDATION -->
-<section class="section-block">
-    <span class="tag">SMART FARMING</span>
-    <h2>Crop Recommendations</h2>
-    <div class="crop-grid">
-        <div class="crop-card"><div class="crop-emoji">🌾</div><h3>Rice</h3><p>Sample crop suggestion</p></div>
-        <div class="crop-card"><div class="crop-emoji">🫘</div><h3>Black Gram</h3><p>Sample crop suggestion</p></div>
-        <div class="crop-card"><div class="crop-emoji">🌻</div><h3>Groundnut</h3><p>Sample crop suggestion</p></div>
-    </div>
-</section>
-
-<!-- DISEASE DETECTION -->
-<section class="section-block" id="disease">
-    <span class="tag">PLANT CARE</span>
-    <h2>Plant Disease Detection</h2>
-    <div class="panel">
-        <p>Upload a plant leaf image to preview it.</p>
-        <label class="upload-area" for="leafUpload">
-            <span>📷</span>
-            <strong>Upload Leaf Image</strong>
-            <small>Choose JPG or PNG image</small>
-            <input type="file" id="leafUpload" accept="image/*">
-        </label>
-        <img id="leafPreview" class="leaf-preview" alt="Leaf preview">
-        <p id="leafMessage" class="summary-text">No image selected.</p>
-        <p class="demo-note">Image preview only. Actual disease detection requires an AI model.</p>
-    </div>
-</section>
-
-<!-- IRRIGATION -->
-<section class="section-block" id="irrigation">
-    <span class="tag">WATER MANAGEMENT</span>
-    <h2>Smart Irrigation</h2>
-    <div class="panel">
-        <div class="section-heading">
-            <h3>Soil Moisture Level</h3>
-            <strong id="moistureValue">45%</strong>
+<body>
+  <header class="navbar">
+    <a class="logo" href="/">🌱 SoilVerity</a>
+    <nav><a href="#farm">Farm setup</a><a href="#results">Recommendations</a><button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark theme">🌙</button></nav>
+  </header>
+  <main class="integrated">
+    <section class="intro">
+      <span class="tag">FIELD SHIFT · ROTATION PLANNER</span>
+      <h1>Make your next season a considered one.</h1>
+      <p>Compare your current crop rotation with alternatives using the SoilVerity decision engine. This quick-start build connects the web form, crop knowledge table, synthetic climate data and engine output.</p>
+    </section>
+    <section class="panel" id="farm">
+      <h2>🌾 Tell us about your farm</h2>
+      <form id="farmForm">
+        <div class="form-grid">
+          <div class="field"><label for="location">Farm or district name</label><input id="location" placeholder="e.g. Villupuram" value="Demo farm"></div>
+          <div class="field"><label for="water">Main water source</label><select id="water"><option value="borewell">Borewell</option><option value="canal">Canal</option><option value="rainfed">Rainfed</option></select></div>
+          <div class="field"><label for="startSeason">Next planting season</label><select id="startSeason"><option value="kharif">Kharif</option><option value="rabi">Rabi</option><option value="summer">Summer</option></select></div>
+          <div class="field"><label for="soilPh">Soil pH <small>(optional)</small></label><input id="soilPh" type="number" min="0" max="14" step="0.1" placeholder="Unknown"></div>
+          <div class="field"><label for="soilEc">Soil EC, dS/m <small>(optional)</small></label><input id="soilEc" type="number" min="0" step="0.1" placeholder="Unknown"></div>
+          <div class="field"><label for="organicCarbon">Organic carbon, % <small>(optional)</small></label><input id="organicCarbon" type="number" min="0" step="0.01" placeholder="Unknown"></div>
+          <div class="field wide"><label>Current rotation · one crop per season</label>
+            <div class="rotation"><select id="crop1" aria-label="Crop for first season"></select><select id="crop2" aria-label="Crop for second season"></select><select id="crop3" aria-label="Crop for third season"></select></div>
+          </div>
         </div>
-        <input type="range" id="moistureSlider" min="0" max="100" value="45">
-        <div class="progress"><span id="moistureBar" style="width:45%"></span></div>
-        <h3 id="waterStatus" class="water-status">Moderate Moisture</h3>
-        <p class="demo-note">Move the slider to explore sample irrigation suggestions. This is not a real sensor reading.</p>
-    </div>
-</section>
-
-<!-- FERTILIZER -->
-<section class="section-block" id="fertilizer">
-    <span class="tag">NUTRIENT MANAGEMENT</span>
-    <h2>Fertilizer Suggestions</h2>
-    <div class="crop-grid">
-        <div class="crop-card"><div class="crop-emoji">🌿</div><h3>Compost</h3><p>Organic soil improvement option.</p></div>
-        <div class="crop-card"><div class="crop-emoji">🧪</div><h3>NPK Fertilizer</h3><p>Balanced nutrient option.</p></div>
-        <div class="crop-card"><div class="crop-emoji">🍃</div><h3>Green Manure</h3><p>Organic soil enrichment option.</p></div>
-    </div>
-    <p class="demo-note">General examples only. Actual fertilizer choice and dosage require verified soil test results and agricultural advice.</p>
-</section>
-
-<!-- MARKET TRACKER -->
-<section class="section-block" id="market">
-    <span class="tag">AGRICULTURE MARKET</span>
-    <h2>Crop Market Price Tracker</h2>
-    <div class="panel table-wrap">
-        <table class="market-table">
-            <thead><tr><th>Crop</th><th>Market</th><th>Sample Price / Quintal</th></tr></thead>
-            <tbody>
-                <tr><td>Rice</td><td>Villupuram</td><td>₹2,300</td></tr>
-                <tr><td>Groundnut</td><td>Villupuram</td><td>₹6,200</td></tr>
-                <tr><td>Black Gram</td><td>Villupuram</td><td>₹7,000</td></tr>
-                <tr><td>Maize</td><td>Villupuram</td><td>₹2,100</td></tr>
-            </tbody>
-        </table>
-        <p class="demo-note">Illustrative prices only, not live market rates.</p>
-    </div>
-</section>
-
-<!-- FARM HISTORY -->
-<section class="section-block" id="history">
-    <span class="tag">YOUR FARM RECORDS</span>
-    <h2>Farm History</h2>
-    <div class="panel">
-        <div id="historyList" class="history-list">
-            <p class="demo-note">Your generated farm reports will appear here.</p>
+        <h3 style="margin:20px 0 0">What matters most? <small>(1–5)</small></h3>
+        <div class="priority-grid">
+          <div class="field"><label for="priorityWater">Water</label><input id="priorityWater" type="number" min="1" max="5" value="4"></div>
+          <div class="field"><label for="prioritySoil">Soil health</label><input id="prioritySoil" type="number" min="1" max="5" value="4"></div>
+          <div class="field"><label for="priorityCost">Cost / market</label><input id="priorityCost" type="number" min="1" max="5" value="3"></div>
+          <div class="field"><label for="priorityRisk">Climate risk</label><input id="priorityRisk" type="number" min="1" max="5" value="3"></div>
         </div>
-    </div>
-</section>
-
-<!-- AI ASSISTANT -->
-<section class="section-block" id="assistant">
-    <span class="tag">FARMING SUPPORT</span>
-    <h2>AI Farming Assistant</h2>
-    <div class="panel chat-panel">
-        <div class="chat-heading">🤖 Soil Verity Assistant <span class="status-pill">Demo Chat</span></div>
-        <div id="chatMessages" class="chat-messages">
-            <div class="bot-message">Hello! 🌱 Ask me about soil, crops, irrigation or fertilizers.</div>
-        </div>
-        <form id="chatForm" class="chat-form">
-            <input id="chatInput" placeholder="Ask a farming question..." autocomplete="off" required>
-            <button class="primary-btn" type="submit">Send</button>
-        </form>
-        <p class="demo-note">Predefined demo replies only. Not a real AI assistant.</p>
-    </div>
-</section>
-
-<!-- REPORT -->
-<section class="panel">
-    <div class="section-heading">
-        <div>
-            <span class="tag">FARM REPORT</span>
-            <h2>Download Your Report</h2>
-        </div>
-        <button class="primary-btn" id="downloadReport">↓ Download PDF</button>
-    </div>
-    <p class="demo-note">Uses your browser's Print / Save as PDF option.</p>
-</section>
-
-<p class="demo-note">Soil Verity demo project · All displayed measurements and prices are sample data.</p>
-
-</main>
-
-<footer>
-    <h3>🌱 Soil Verity</h3>
-    <small>Growing a smarter and greener tomorrow.</small>
-</footer>
-
-<script src="script.js"></script>
+        <div class="submit-row"><button class="primary-btn" id="runButton" type="submit">Compare crop rotations →</button><span id="formStatus" role="status">Ready · local demo engine</span></div>
+      </form>
+    </section>
+    <section id="results" class="results" aria-live="polite">
+      <h2>Recommendation report</h2>
+      <div id="resultContent" class="panel"><p>Submit the farm form to run the decision engine and see recommendations here.</p></div>
+    </section>
+  </main>
+  <footer><h3>🌱 SoilVerity</h3><small>Field Shift · Demo build</small></footer>
+  <script src="script.js"></script>
 </body>
 </html>
